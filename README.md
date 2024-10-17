@@ -171,20 +171,20 @@ För att implementera en inloggningsfunktion kan man skapa en tabell för använ
 
 5b. Prepared statements
 Prepared statements skyddar mot SQL-injektion genom att separera SQL-kod från inmatade data. Exempel:
-sql
-INSERT INTO Borrower (name, phone, email) VALUES (?, ?, ?);
 
+sql
+
+INSERT INTO Borrower (name, phone, email) VALUES (?, ?, ?);
 5c. Attackvektor: SQL-injektion
 SQL-injektion är en attack där en angripare manipulerar SQL-frågor. Man skyddar sig genom att använda prepared statements och aldrig inkludera användarinmatad data direkt i SQL-frågor.
 
 6. Analys och reflektion
+
 6a. Potentiella förbättringar
 En förbättring kan vara att lägga till fler constraints, till exempel begränsa antalet böcker en låntagare får låna samtidigt.
 
 6b. Reflektion över designval
-Designen är gjord för att säkerställa att systemet är skalbart och lätt att underhålla. Databasnormalisering används för att undvika datainkonsistens och redundans.
-
-# 7. Dokumentation
+Designen är gjord för att säkerställa att systemet är skalbart och lätt att underhålla. Databasnormalisering används för att undvika datainkonsistens och redundans
 
 ## 7a. Rapport
 Databasdesignen följer normaliseringsprinciper upp till tredje normalformen. Primärnycklar och främmande nycklar används för att säkerställa referensintegritet. CRUD-operationer och vyer är implementerade för att hantera och kombinera data effektivt.
