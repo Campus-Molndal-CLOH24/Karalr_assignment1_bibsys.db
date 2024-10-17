@@ -183,7 +183,7 @@ Designen är gjord för att säkerställa att systemet är skalbart och lätt at
 # 7. Dokumentation
 
 ## 7a. Rapport
-Databasdesignen följer normalisering upp till tredje normalformen. CRUD-operationer och vyer är implementerade för effektiv hantering av data.
+Databasdesignen följer normaliseringsprinciper upp till tredje normalformen. Primärnycklar och främmande nycklar används för att säkerställa referensintegritet. CRUD-operationer och vyer är implementerade för att hantera och kombinera data effektivt.
 
 ## 7b. Instruktioner
 Skapa databasen med de SQL-skript som tillhandahålls och använd INSERT-kommandon för att lägga till initial data.
