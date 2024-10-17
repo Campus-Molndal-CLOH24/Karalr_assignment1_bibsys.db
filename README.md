@@ -104,6 +104,7 @@ CREATE TABLE Loan (
          ('Jane Eyre', 'Charlotte Brontë', 1994, '9780141441146'),
          ('The Hobbit', 'J.R.R. Tolkien', 1976, '9780345339683'),
          ('War and Peace', 'Leo Tolstoy', 1969, '9780199232765');
+);
 
 Read: Hämta alla böcker:
 sql
