@@ -82,9 +82,7 @@ CREATE TABLE Loan (
     FOREIGN KEY (borrower_id) REFERENCES Borrower(borrower_id)
 );
 
-Här är din text formaterad i **Markdown-syntax**:
 
-```markdown
 # 2b. Primärnycklar och främmande nycklar
 - **Primärnycklar**: `book_id`, `borrower_id`, och `loan_id`.
 - **Främmande nycklar**: `book_id` och `borrower_id` i `Loan`, som kopplar till respektive `Book` och `Borrower`.
@@ -93,91 +91,97 @@ Här är din text formaterad i **Markdown-syntax**:
 
 ## 3a. CRUD-operationer
 
-- **Create**: Lägg till en ny bok:
+- **Create**: Lägg till tio nya böcker:
   ```sql
   INSERT INTO Book (title, author, publication_year, isbn) 
-  VALUES ('Moby Dick', 'Herman Melville', 1851, '9781234567890');
-  ```
+  VALUES ('Moby Dick', 'Herman Melville', 1851, '9781234567890'),
+         ('To Kill a Mockingbird', 'Harper Lee', 1960, '9780446310789'),
+         ('1984', 'George Orwell', 1995, '9780451524935'),
+         ('Pride and Prejudice', 'Jane Austen', 1991, '9780141439518'),
+         ('The Great Gatsby', 'F. Scott Fitzgerald', 1970, '9780743273565'),
+         ('The Catcher in the Rye', 'J.D. Salinger', 1998, '9780316769488'),
+         ('Brave New World', 'Aldous Huxley', 1990, '9780060850524'),
+         ('Jane Eyre', 'Charlotte Brontë', 1994, '9780141441146'),
+         ('The Hobbit', 'J.R.R. Tolkien', 1976, '9780345339683'),
+         ('War and Peace', 'Leo Tolstoy', 1969, '9780199232765');
 
-- **Read**: Hämta alla böcker:
-  ```sql
-  SELECT * FROM Book;
-  ```
+Read: Hämta alla böcker:
+sql
 
-- **Update**: Uppdatera en bok:
-  ```sql
-  UPDATE Book SET title = 'Moby Dick - New Edition' WHERE book_id = 1;
-  ```
+SELECT * FROM Book;
+Analys: Vi har lagt till 10 olika böcker med korrekta ISBN-nummer för att göra det enkelt att utföra datavalidering, och även för att visa användningen av olika författare och årtal.
 
-- **Delete**: Ta bort en bok:
-  ```sql
-  DELETE FROM Book WHERE book_id = 1;
-  ```
+Update: Uppdatera en bok:
+sql
+Copy code
+UPDATE Book SET title = 'Moby Dick - New Edition' WHERE book_id = 1;
+Delete: Ta bort en bok:
 
-## 3b. Vyer (Views)
+sql
+DELETE FROM Book WHERE book_id = 10;  -- Ta bort 'War and Peace'
+Analys: CRUD-operationerna fungerar med de nya böckerna, och detta exempel tar bort den sista boken ("War and Peace"). Det visar också att DELETE-kommandot hanterar specifika böcker korrekt genom deras book_id.
 
-- **View 1**: Låneböcker och låntagare:
-  ```sql
-  CREATE VIEW LoanInfo AS
-  SELECT Loan.loan_id, Borrower.name, Book.title, Loan.loan_date, Loan.due_date
-  FROM Loan
-  JOIN Borrower ON Loan.borrower_id = Borrower.borrower_id
-  JOIN Book ON Loan.book_id = Book.book_id;
-  ```
 
-- **View 2**: Försenade lån:
-  ```sql
-  CREATE VIEW OverdueLoans AS
-  SELECT Loan.loan_id, Borrower.name, Book.title, Loan.due_date
-  FROM Loan
-  JOIN Borrower ON Loan.borrower_id = Borrower.borrower_id
-  JOIN Book ON Loan.book_id = Book.book_id
-  WHERE Loan.due_date < DATE('now') AND Loan.return_date IS NULL;
-  ```
+3b. Vyer (Views)
+View 1: Låneböcker och låntagare:
+sql
 
-# 4. Avancerade frågor
+CREATE VIEW LoanInfo AS
+SELECT Loan.loan_id, Borrower.name, Book.title, Loan.loan_date, Loan.due_date
+FROM Loan
+JOIN Borrower ON Loan.borrower_id = Borrower.borrower_id
+JOIN Book ON Loan.book_id = Book.book_id;
 
-## 4a. JOIN mellan tre tabeller:
-```sql
+View 2: Försenade lån:
+sql
+
+CREATE VIEW OverdueLoans AS
+SELECT Loan.loan_id, Borrower.name, Book.title, Loan.due_date
+FROM Loan
+JOIN Borrower ON Loan.borrower_id = Borrower.borrower_id
+JOIN Book ON Loan.book_id = Book.book_id
+WHERE Loan.due_date < DATE('now') AND Loan.return_date IS NULL;
+Analys: I vyerna ser vi tydligt lånat material och de som har förfallit. De nya böckerna gör testningen mer realistisk, och det är viktigt att kontrollera hur dessa vyer fungerar med stora dataset.
+
+4. Avancerade frågor
+4a. JOIN mellan tre tabeller:
+sql
+Copy code
 SELECT Borrower.name, Book.title, Loan.loan_date, Loan.due_date
 FROM Loan
 JOIN Borrower ON Loan.borrower_id = Borrower.borrower_id
 JOIN Book ON Loan.book_id = Book.book_id;
-```
+Analys: Denna JOIN kombinerar information från låntagare och böcker för att ge en fullständig översikt över lån. Detta kan användas för rapportering och spårning av vem som har lånat vilken bok.
 
-## 4b. Subquery:
-```sql
+4b. Subquery:
+sql
 SELECT title FROM Book WHERE book_id = (SELECT book_id FROM Loan WHERE loan_id = 1);
-```
 
-## 4c. GROUP BY och HAVING:
-```sql
+4c. GROUP BY och HAVING:
+sql
 SELECT Borrower.name, COUNT(Loan.loan_id) AS total_loans
 FROM Loan
 JOIN Borrower ON Loan.borrower_id = Borrower.borrower_id
 GROUP BY Borrower.name HAVING total_loans > 5;
-```
+Analys: GROUP BY används här för att räkna antalet lån per låntagare. HAVING-villkoret säkerställer att bara de som har lånat mer än fem gånger visas. Detta kan användas för att identifiera aktiva låntagare.
 
-# 5. Säkerhet
-
-## 5a. Enkel inloggningsfunktion
+5. Säkerhet
+5a. Enkel inloggningsfunktion
 För att implementera en inloggningsfunktion kan man skapa en tabell för användare med användarnamn och lösenord (hashed). Säkerhetsaspekter inkluderar lösenordshashning och skydd mot SQL-injektion.
 
-## 5b. Prepared statements
+5b. Prepared statements
 Prepared statements skyddar mot SQL-injektion genom att separera SQL-kod från inmatade data. Exempel:
-```sql
+sql
 INSERT INTO Borrower (name, phone, email) VALUES (?, ?, ?);
-```
 
-## 5c. Attackvektor: SQL-injektion
+5c. Attackvektor: SQL-injektion
 SQL-injektion är en attack där en angripare manipulerar SQL-frågor. Man skyddar sig genom att använda prepared statements och aldrig inkludera användarinmatad data direkt i SQL-frågor.
 
-# 6. Analys och reflektion
+6. Analys och reflektion
+6a. Potentiella förbättringar
+En förbättring kan vara att lägga till fler constraints, till exempel begränsa antalet böcker en låntagare får låna samtidigt.
 
-## 6a. Potentiella förbättringar
-En förbättring kan vara att lägga till fler constraints, till exempel begränsa antal böcker en låntagare får låna samtidigt.
-
-## 6b. Reflektion över designval
+6b. Reflektion över designval
 Designen är gjord för att säkerställa att systemet är skalbart och lätt att underhålla. Databasnormalisering används för att undvika datainkonsistens och redundans.
 
 # 7. Dokumentation
@@ -185,8 +189,5 @@ Designen är gjord för att säkerställa att systemet är skalbart och lätt at
 ## 7a. Rapport
 Databasdesignen följer normaliseringsprinciper upp till tredje normalformen. Primärnycklar och främmande nycklar används för att säkerställa referensintegritet. CRUD-operationer och vyer är implementerade för att hantera och kombinera data effektivt.
 
-## 7b. Instruktioner
-Skapa databasen med de SQL-skript som tillhandahålls och använd INSERT-kommandon för att lägga till initial data.
-
-## 7c. SQL-skript
+## 7b. SQL-skript
 Skriptet för att skapa och populera databasen ingår i denna dokumentation.
